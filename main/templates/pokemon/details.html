@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ pokemon.name|title }} | Pokédex{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 py-8 px-4">
+    {% include "components/header.html" %}
+
+    <div class="container mx-auto mt-8">
+        <!-- Pokemon Details Card -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden border-4 border-gray-800 mb-10">
+            <!-- Pokemon Header -->
+            <div class="bg-red-600 p-4 text-white">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <h1 class="text-3xl font-bold font-retro-heading capitalize">{{ pokemon.name }}</h1>
+                        <span class="ml-4 bg-yellow-300 text-yellow-800 font-pixel rounded-full px-3 py-1 text-xs">#{{ pokemon.id|stringformat:"03d" }}</span>
+                    </div>
+                    <div>
+                        {% for type in pokemon.types %}
+                            {% with type_name=type.type.name style="pill" %}
+                                {% include "components/pokemon_type.html" %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="flex flex-col md:flex-row">
+                <!-- Left: Images -->
+                <div class="md:w-1/3 p-6 border-r-2 border-gray-200">
+                    <div class="bg-yellow-100 rounded-lg p-4 border-2 border-gray-300 mb-4 transform transition duration-300 hover:shadow-lg hover:scale-105 sprite-card" data-sprite-type="default">
+                        <h3 class="text-lg font-bold mb-2 text-center font-retro">Default</h3>
+                        <div class="flex justify-center relative sprite-container">
+                            <div class="absolute inset-0 bg-yellow-300 rounded-full opacity-0 sprite-glow transition-opacity duration-300" style="z-index:0;"></div>
+                            {% if pokemon.sprites.front_default %}
+                                <img src="{{ pokemon.sprites.front_default }}" alt="{{ pokemon.name }} front" class="w-40 h-40 pixelated sprite-image" style="z-index:1; position:relative;">
+                            {% else %}
+                                <p class="text-gray-500 text-center mt-12">No sprite available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-100 rounded-lg p-4 border-2 border-gray-300 transform transition duration-300 hover:shadow-lg hover:scale-105 sprite-card" data-sprite-type="shiny">
+                        <h3 class="text-lg font-bold mb-2 text-center font-retro">Shiny</h3>
+                        <div class="flex justify-center relative sprite-container">
+                            <div class="absolute inset-0 bg-yellow-300 rounded-full opacity-0 sprite-glow transition-opacity duration-300" style="z-index:0;"></div>
+                            {% if pokemon.sprites.front_shiny %}
+                                <img src="{{ pokemon.sprites.front_shiny }}" alt="{{ pokemon.name }} shiny" class="w-40 h-40 pixelated sprite-image" style="z-index:1; position:relative;">
+                            {% else %}
+                                <p class="text-gray-500 text-center mt-12">No sprite available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="bg-yellow-100 rounded-lg p-4 border-2 border-gray-300 mt-4">
+                        <h3 class="text-lg font-bold mb-2 text-center font-retro">Favorites</h3>
+                        <form method="post" action="{% url 'toggle_favorite' pokemon.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="favorite-btn focus:outline-none w-full py-2 px-4 rounded-lg flex items-center justify-center">
+                                {% if is_favorite %}
+                                <div class="flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-700 p-2 rounded-lg border-2 border-red-300 transition-all duration-200 w-full cursor-pointer hover:shadow-md">
+                                    <svg class="h-8 w-8 text-red-500 fill-current animate-favorite mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                    <span class="font-retro">Remove from Favorites</span>
+                                </div>
+                                {% else %}
+                                <div class="flex items-center justify-center bg-white hover:bg-gray-100 text-gray-700 p-2 rounded-lg border-2 border-gray-300 transition-all duration-200 w-full cursor-pointer hover:shadow-md">
+                                    <svg class="h-8 w-8 text-gray-400 hover:text-red-500 mr-2 transition duration-150" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                    <span class="font-retro">Add to Favorites</span>
+                                </div>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Right: Details -->
+                <div class="md:w-2/3 p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Base Stats -->
+                        <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
+                            <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Base Stats</h3>
+                            <ul>
+                                {% for stat in pokemon.stats %}
+                                <li class="mb-4">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="font-semibold font-retro capitalize">{{ stat.stat.name }}</span>
+                                        <span class="font-retro">{{ stat.base_stat }}/255</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                                        {% with forloop.counter|stringformat:"s" as stat_index %}
+                                            {% if stat.stat.name == "hp" %}
+                                                <div class="stat-bar bg-green-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% elif stat.stat.name == "attack" %}
+                                                <div class="stat-bar bg-red-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% elif stat.stat.name == "defense" %}
+                                                <div class="stat-bar bg-blue-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% elif stat.stat.name == "special-attack" %}
+                                                <div class="stat-bar bg-purple-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% elif stat.stat.name == "special-defense" %}
+                                                <div class="stat-bar bg-indigo-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% elif stat.stat.name == "speed" %}
+                                                <div class="stat-bar bg-yellow-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% else %}
+                                                <div class="stat-bar bg-gray-500 h-3 rounded-full animate-stat-fill" style="--stat-percent: {{ stat.base_stat|floatformat:0|default:0|stringformat:"s" }}"></div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <!-- Physical Details -->
+                        <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
+                            <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Details</h3>
+                            <ul>
+                                <li class="mb-2 flex justify-between">
+                                    <span class="font-semibold font-retro">Height:</span>
+                                    <span class="font-retro">{{ pokemon.height|floatformat:0|default:0|divisibleby:10|floatformat:1 }} m</span>
+                                </li>
+                                <li class="mb-2 flex justify-between">
+                                    <span class="font-semibold font-retro">Weight:</span>
+                                    <span class="font-retro">{{ pokemon.weight|floatformat:0|default:0|divisibleby:10|floatformat:1 }} kg</span>
+                                </li>
+                                <li class="mb-2 flex justify-between">
+                                    <span class="font-semibold font-retro">Base Experience:</span>
+                                    <span class="font-retro">{{ pokemon.base_experience }}</span>
+                                </li>
+                            </ul>
+                            
+                            <h4 class="font-bold mt-4 mb-2 font-retro">Abilities:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                {% for ability in pokemon.abilities %}
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm {% if ability.is_hidden %}border border-blue-500{% endif %} capitalize">
+                                    {{ ability.ability.name }}
+                                    {% if ability.is_hidden %}
+                                    <span class="ml-1 text-xs">(Hidden)</span>
+                                    {% endif %}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Moves -->
+                        <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-300 col-span-1 md:col-span-2">
+                            <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Moves</h3>
+                            <div class="max-h-40 overflow-y-auto">
+                                <div class="flex flex-wrap gap-2">
+                                    {% for move in pokemon.moves|slice:":20" %}
+                                    <span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm capitalize">{{ move.move.name }}</span>
+                                    {% endfor %}
+                                    {% if pokemon.moves|length > 20 %}
+                                    <span class="text-gray-500 text-sm">+ {{ pokemon.moves|length|add:"-20" }} more moves</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mb-10">
+            {% if pokemon.id > 1 %}
+            <a href="{% url 'pokemon_details' pokemon.id|add:"-1" %}" class="bg-red-600 hover:bg-red-700 text-white font-pixel text-sm py-2 px-6 rounded-lg shadow-md transition-all duration-200 flex items-center cursor-pointer hover:shadow-lg hover:translate-y-[-2px]">
+                <span class="mr-2">←</span> Previous
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+            
+            <a href="{% url 'pokemon_details' pokemon.id|add:"1" %}" class="bg-red-600 hover:bg-red-700 text-white font-pixel text-sm py-2 px-6 rounded-lg shadow-md transition-all duration-200 flex items-center cursor-pointer hover:shadow-lg hover:translate-y-[-2px]">
+                Next <span class="ml-2">→</span>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-12 pb-8">
+            {% include "components/footer.html" %}
+        </footer>
+    </div>
+</div>
+
+<style>
+    /* Custom retro UI elements */
+    .pixelated {
+        image-rendering: pixelated;
+    }
+    
+    /* Add some CRT scan lines effect to the page */
+    .min-h-screen::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03),
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.5;
+    }
+    
+    /* Favorite button animation */
+    .favorite-btn {
+        transition: transform 0.2s;
+    }
+    
+    .favorite-btn:hover {
+        transform: scale(1.15);
+    }
+    
+    @keyframes heartbeat {
+        0% { transform: scale(1); }
+        25% { transform: scale(1.2); }
+        50% { transform: scale(1); }
+        75% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    .animate-favorite {
+        animation: heartbeat 1s ease-in-out 1;
+    }
+    
+    /* Sprite interactions */
+    .sprite-card:hover .sprite-glow {
+        opacity: 0.3;
+    }
+    
+    .sprite-view-btn.active {
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    @keyframes bounce-sprite {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .sprite-container:hover .sprite-image {
+        animation: bounce-sprite 1s ease infinite;
+    }
+    
+    /* Stat bars animation */
+    .stat-bar {
+        width: 0;
+        transition: width 1.5s ease-out;
+    }
+    
+    .animate-stat-fill {
+        width: calc(var(--stat-percent) / 255 * 100%);
+    }
+</style>
+
+<!-- Sprite View Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all sprite view buttons
+        const spriteViewBtns = document.querySelectorAll('.sprite-view-btn');
+        
+        // Add click event listeners to each button
+        spriteViewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const view = this.getAttribute('data-view');
+                const spriteType = this.getAttribute('data-sprite-type');
+                const spriteCard = document.querySelector(`.sprite-card[data-sprite-type="${spriteType}"]`);
+                const spriteImage = spriteCard.querySelector('.sprite-image');
+                
+                // Get current sprite URL
+                const currentUrl = spriteImage.getAttribute('src');
+                
+                // Change the URL based on view (front/back)
+                let newUrl;
+                if (view === 'front') {
+                    newUrl = currentUrl.replace('back_', 'front_');
+                } else if (view === 'back') {
+                    newUrl = currentUrl.replace('front_', 'back_');
+                }
+                
+                // Update the image src
+                if (newUrl) {
+                    spriteImage.style.opacity = 0;
+                    setTimeout(() => {
+                        spriteImage.setAttribute('src', newUrl);
+                        spriteImage.style.opacity = 1;
+                    }, 200);
+                }
+                
+                // Update active state of buttons in this sprite card
+                const siblingBtns = spriteCard.querySelectorAll('.sprite-view-btn');
+                siblingBtns.forEach(siblingBtn => {
+                    siblingBtn.classList.remove('active');
+                    siblingBtn.classList.remove('bg-blue-500');
+                    siblingBtn.classList.remove('text-white');
+                    siblingBtn.classList.add('bg-gray-300');
+                });
+                
+                this.classList.add('active', 'bg-blue-500', 'text-white');
+                this.classList.remove('bg-gray-300');
+            });
+        });
+        
+        // Animate stat bars on page load
+        setTimeout(() => {
+            const statBars = document.querySelectorAll('.stat-bar');
+            statBars.forEach(bar => {
+                const percent = bar.style.getPropertyValue('--stat-percent');
+                bar.style.width = `calc(${percent} / 255 * 100%)`;
+            });
+        }, 300);
+    });
+</script>
+{% endblock %}

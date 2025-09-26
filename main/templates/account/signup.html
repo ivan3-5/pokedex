@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+{% load account socialaccount %}
+
+{% block title %}Sign Up | Pokédex{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 py-8 px-4">
+    {% include "components/header.html" %}
+
+    <div class="container mx-auto mt-12">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg border-4 border-gray-800 overflow-hidden">
+            <!-- Signup Header -->
+            <div class="bg-red-600 p-4 text-white">
+                <h1 class="text-xl font-bold text-center font-retro-heading">Join the Pokédex</h1>
+            </div>
+            
+            <!-- Form Container -->
+            <div class="p-6 md:p-8">
+                {% if form.errors %}
+                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg font-retro">
+                    <p>Please input the correct information below.</p>
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Username field -->
+                    <div class="mb-4">
+                        <label for="id_username" class="block text-gray-700 font-semibold mb-2 font-retro">Username</label>
+                        <div class="relative">
+                            <input type="text" name="username" id="id_username" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 font-retro" required>
+                            {% if form.username.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.username.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Email field -->
+                    <div class="mb-4">
+                        <label for="id_email" class="block text-gray-700 font-semibold mb-2 font-retro">Email</label>
+                        <div class="relative">
+                            <input type="email" name="email" id="id_email" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 font-retro" required>
+                            {% if form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.email.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Password field -->
+                    <div class="mb-4">
+                        <label for="id_password1" class="block text-gray-700 font-semibold mb-2 font-retro">Password</label>
+                        <div class="relative">
+                            <input type="password" name="password1" id="id_password1" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 font-retro" required>
+                            {% if form.password1.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.password1.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-1 font-retro">Password must be at least 8 characters long with letters, numbers, and symbols.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Confirm Password field -->
+                    <div class="mb-6">
+                        <label for="id_password2" class="block text-gray-700 font-semibold mb-2 font-retro">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" name="password2" id="id_password2" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 font-retro" required>
+                            {% if form.password2.errors %}
+                            <div class="text-red-500 text-sm mt-1">
+                                {% for error in form.password2.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Terms & Conditions -->
+                    <div class="mb-6 flex items-start">
+                        <input type="checkbox" name="terms" id="terms" class="mt-1 h-4 w-4 text-red-500 border-gray-300 rounded focus:ring-red-500" required>
+                        <label for="terms" class="ml-2 block text-sm text-gray-700 font-retro">
+                            I agree to the <a href="#" class="text-blue-600 hover:text-blue-800">Terms and Conditions</a> and <a href="#" class="text-blue-600 hover:text-blue-800">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    
+                    <!-- Submit Button -->
+                    <div class="mb-6">
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-pixel py-2 px-4 rounded-lg shadow-md transition">
+                            Sign Up
+                        </button>
+                    </div>
+                    
+                    <!-- Separator -->
+                    <div class="flex items-center my-6">
+                        <div class="flex-grow border-t border-gray-300"></div>
+                        <span class="px-4 text-gray-500 font-retro">or</span>
+                        <div class="flex-grow border-t border-gray-300"></div>
+                    </div>
+                    
+                    <!-- Social Login Buttons -->
+                    {% get_providers as socialaccount_providers %}
+                    {% if socialaccount_providers %}
+                    <div class="mb-6">
+                        {% for provider in socialaccount_providers %}
+                            {% if provider.id == "google" %}
+                            <a href="{% provider_login_url provider.id process='login' %}" class="w-full flex items-center justify-center bg-white border border-gray-300 rounded-lg shadow-md py-2 px-4 text-sm font-retro text-gray-700 hover:bg-gray-50 mb-2">
+                                <img src="{% static 'images/google-icon.png' %}" alt="Google" class="w-5 h-5 mr-2">
+                                Sign up with Google
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="text-gray-700 font-retro">
+                            Already have an account? 
+                            <a href="{% url 'account_login' %}" class="text-blue-600 hover:text-blue-800 font-semibold">Log In</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="text-center text-gray-600 mt-20 pb-8">
+        <p class="font-retro text-lg">© 2025 Pokédex. All rights reserved.</p>
+        <p class="font-retro mt-2">Pokémon and Pokémon character names are trademarks of Nintendo.</p>
+    </footer>
+</div>
+
+<style>
+    /* Add some CRT scan lines effect to the page */
+    .min-h-screen::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03),
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}

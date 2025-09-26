@@ -1,0 +1,66 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Pokédex{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    {% tailwind_css %}
+    <style>
+        /* Global Retro Font Styles */
+        body {
+            font-family: 'VT323', monospace;
+        }
+        h1, h2, h3, h4, h5, h6, .font-retro-heading {
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.4;
+        }
+        .font-pixel {
+            font-family: 'Press Start 2P', cursive;
+            image-rendering: pixelated;
+            letter-spacing: 1px;
+        }
+        .font-retro {
+            font-family: 'VT323', monospace;
+        }
+        /* Pixelated image effect */
+        .pixelated {
+            image-rendering: pixelated;
+        }
+        
+        /* Animated stat bars */
+        .stat-bar {
+            width: 0;
+            transition: width 1s ease-out;
+        }
+        
+        @keyframes fillBar {
+            from { width: 0; }
+            to { width: calc(var(--stat-percent) * 100% / 255); }
+        }
+        
+        .animate-stat-fill {
+            animation: fillBar 1.5s forwards;
+            width: calc(var(--stat-percent) * 100% / 255);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 text-black leading-normal tracking-normal">
+    <!-- Hidden CSRF form for JavaScript use -->
+<form id="csrf-form" style="display:none;">
+    {% csrf_token %}
+</form>
+
+{% block content %}{% endblock %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

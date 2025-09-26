@@ -1,0 +1,7 @@
+{% if style == "pill" %}
+    <span class="{{ bg_color }} {{ text_color }} px-3 py-1 rounded-full text-sm font-semibold mr-2 capitalize">{{ type_name }}</span>
+{% elif style == "large" %}
+    <span class="{{ bg_color }} {{ text_color }} px-4 py-2 rounded text-base font-bold capitalize">{{ type_name }}</span>
+{% else %}
+    <span class="{{ bg_color }} {{ text_color }} px-2 py-1 rounded text-xs font-semibold capitalize">{{ type_name }}</span>
+{% endif %}

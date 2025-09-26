@@ -1,0 +1,177 @@
+{% load static %}
+<header class="bg-red-600 text-white shadow-lg">
+    <div class="container mx-auto py-4 px-6">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <a href="/" class="text-white hover:text-yellow-300 flex items-center space-x-2 transition duration-200">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Poké Ball" class="w-6 h-6 pixelated">
+                    <h1 class="text-xl font-bold font-retro-heading tracking-wider">PokéDex</h1>
+                </a>
+            </div>
+            <div class="flex items-center">
+                
+                <div class="relative user-dropdown">
+                    {% if user.is_authenticated %}
+                        <button class="flex items-center focus:outline-none cursor-pointer transition duration-200 hover:scale-105" id="user-menu-button" aria-expanded="false" aria-haspopup="true" title="Open menu">
+                            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-yellow-300 flex items-center justify-center bg-gray-800 shadow-md transition duration-200">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <span class="text-lg font-bold text-white font-retro">{{ user.username|make_list|first|upper }}</span>
+                                {% endif %}
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1 text-yellow-300" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        
+                        <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden dropdown-menu z-50" 
+                             role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                                                            <div class="py-2 px-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-yellow-300 flex items-center justify-center bg-gray-800 shadow-md">
+                                        {% if user.profile.avatar %}
+                                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                            <span class="text-lg font-bold text-white font-retro">{{ user.username|make_list|first|upper }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="text-gray-900 font-bold font-retro">{{ user.username }}</p>
+                                                <p class="text-gray-500 text-xs font-retro">{{ user.email }}</p>
+                                            </div>
+                                            <a href="{% url 'change_avatar' %}" class="text-xs text-blue-600 hover:text-blue-800 font-retro transition-colors duration-150">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if favorite_count is not None %}
+                                <div class="mt-2 bg-red-50 rounded-md p-2 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="text-sm text-red-700 font-retro font-semibold">{{ favorite_count }} Favorites</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="py-1">
+                                <a href="{% url 'profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-retro cursor-pointer transition-colors duration-150" role="menuitem">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 transition duration-150" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                    Profile
+                                </a>
+                                <a href="{% url 'favorites' %}" class="flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-retro cursor-pointer transition-colors duration-150" role="menuitem">
+                                    <div class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 transition duration-150" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                        </svg>
+                                        Favorites
+                                    </div>
+                                    {% if favorite_count > 0 %}
+                                        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ favorite_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="{% url 'account_logout' %}" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-retro cursor-pointer transition-colors duration-150" role="menuitem">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-red-500 transition duration-150" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414l-5-5H3zm4 6a1 1 0 100 2h4a1 1 0 100-2H7z" clip-rule="evenodd" />
+                                    </svg>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex space-x-3">
+                            <a href="{% url 'account_login' %}" class="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 px-4 py-2 rounded-md text-sm font-pixel transition-all duration-200 cursor-pointer flex items-center hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 transition duration-150" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Login
+                            </a>
+                            <a href="{% url 'account_signup' %}" class="bg-transparent hover:bg-white hover:bg-opacity-20 text-white border border-white px-4 py-2 rounded-md text-sm font-pixel transition-all duration-200 cursor-pointer hover:shadow-md">Sign up</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+    /* Dropdown menu animations and styles */
+    .user-dropdown .dropdown-menu {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        opacity: 0;
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .user-dropdown.active .dropdown-menu {
+        opacity: 1;
+        transform: translateY(0);
+        display: block;
+    }
+    
+    /* Hover effect for the avatar */
+    #user-menu-button:hover .w-10 {
+        border-color: #FFCC00;
+        box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.3);
+        transform: scale(1.05);
+    }
+    
+    /* Hover effect for the avatar edit icon */
+    .dropdown-menu a.text-blue-600:hover svg {
+        transform: scale(1.2);
+        color: #2563eb;
+    }
+    
+    /* Menu items hover effect */
+    .dropdown-menu a:hover svg {
+        color: currentColor;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userMenuButton = document.getElementById('user-menu-button');
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = document.querySelector('.user-dropdown');
+                dropdown.classList.toggle('active');
+                
+                // Update the aria-expanded attribute for accessibility
+                const expanded = dropdown.classList.contains('active');
+                userMenuButton.setAttribute('aria-expanded', expanded);
+            });
+            
+            // Close the dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.querySelector('.user-dropdown');
+                if (!dropdown.contains(event.target)) {
+                    dropdown.classList.remove('active');
+                    if (userMenuButton) {
+                        userMenuButton.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+            
+            // Close the dropdown when pressing escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const dropdown = document.querySelector('.user-dropdown');
+                    dropdown.classList.remove('active');
+                    if (userMenuButton) {
+                        userMenuButton.setAttribute('aria-expanded', 'false');
+                    }
+                }
+            });
+        }
+    });
+</script>

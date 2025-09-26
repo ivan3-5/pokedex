@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pokédex - Home{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 py-8 px-4">
+    {% include "components/header.html" %}
+
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="fixed bottom-8 right-8 bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform transition-all duration-300 opacity-0 scale-90 cursor-pointer z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <div class="container mx-auto mt-8">
+        <!-- Hero Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 md:p-10 mb-10 border-4 border-gray-800">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-6 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold text-red-600 mb-6 font-retro-heading leading-relaxed">Welcome to the Pokédex!</h1>
+                    <p class="text-gray-700 text-xl mb-8 font-retro">Your ultimate guide to the world of Pokémon. Search, discover, and learn about all your favorite Pokémon.</p>
+                    <a href="/search" class="bg-red-600 hover:bg-red-700 text-white font-pixel py-3 px-6 rounded-lg shadow-md transition transform hover:scale-105 inline-block text-sm">
+                        Start Exploring →
+                    </a>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <a href="/search" class="block" aria-label="Search for Pokémon">
+                            <div class="w-64 h-64 bg-gradient-to-b from-red-500 to-red-600 rounded-full border-8 border-gray-800 flex items-center justify-center overflow-hidden relative shadow-lg pokeball-container">
+                                <div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-red-500 to-red-600"></div>
+                                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-b from-gray-100 to-white"></div>
+                                <div class="w-full h-4 bg-gray-800 absolute top-1/2 transform -translate-y-1/2"></div>
+                                <div class="w-20 h-20 bg-white rounded-full absolute border-6 border-gray-800 flex items-center justify-center z-10 pokeball-button-outer shadow-xl">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full border-4 border-gray-300 shadow-inner pokeball-button-inner"></div>
+                                </div>
+                                <div class="absolute top-5 left-12 w-10 h-4 bg-white opacity-60 rounded-full transform rotate-30"></div>
+                            </div>
+                            <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full mt-4 font-pixel text-sm text-center text-gray-700 opacity-0 transition-opacity duration-300 pokeball-tooltip">
+                                Click to search!
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Pokémon Section -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 font-retro-heading border-b-4 border-red-500 pb-2 inline-block">Featured Pokémon</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-10">
+            {% for pokemon in featured_pokemon %}
+                {% with show_remove=False show_view_details_text=False %}
+                    {% include "components/pokemon_card.html" %}
+                {% endwith %}
+            {% empty %}
+            <!-- Fallback cards in case API fails -->
+            <div class="bg-yellow-100 rounded-lg shadow-md overflow-hidden border-2 border-gray-800 transform transition hover:scale-105">
+                <div class="bg-red-500 h-2"></div>
+                <div class="p-4">
+                    <div class="flex justify-center mb-4">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="Pikachu" class="w-32 h-32 pixelated">
+                    </div>
+                    <h3 class="text-lg font-bold text-center mb-2 font-retro tracking-wide">Pikachu</h3>
+                    <div class="flex justify-center space-x-2 mb-3">
+                        <span class="bg-yellow-400 text-xs font-semibold px-2 py-1 rounded text-yellow-800">Electric</span>
+                    </div>
+                    <a href="/pokemon/25" class="block text-center bg-blue-500 hover:bg-blue-600 text-white text-sm font-pixel py-2 px-4 rounded">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Quick Search Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-800 mb-10 transform transition duration-500 hover:shadow-2xl">
+            <div class="flex items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-800 font-retro-heading mr-3">Quick Search</h2>
+                <div class="search-icon animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+            <form action="/search" method="GET" class="flex flex-col md:flex-row gap-4 search-form-container">
+                <div class="flex-1 relative">
+                    <input type="text" name="q" placeholder="Enter Pokémon name..." 
+                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-500 font-retro text-lg transition-all duration-300 focus:shadow-lg pl-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-pixel text-sm py-3 px-8 rounded-lg shadow-md transition duration-300 transform hover:translate-y-[-2px] hover:shadow-lg relative overflow-hidden cursor-pointer group">
+                    <span class="relative z-10">Search</span>
+                    <span class="absolute right-0 top-0 h-full w-0 bg-yellow-500 opacity-30 transition-all duration-300 group-hover:w-full"></span>
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <span class="text-xs text-gray-500 font-retro">Try searching for: </span>
+                <a href="/search?q=pikachu" class="text-xs text-blue-500 hover:text-blue-700 font-retro ml-2 cursor-pointer">Pikachu</a>
+                <a href="/search?q=charizard" class="text-xs text-blue-500 hover:text-blue-700 font-retro ml-2 cursor-pointer">Charizard</a>
+                <a href="/search?q=bulbasaur" class="text-xs text-blue-500 hover:text-blue-700 font-retro ml-2 cursor-pointer">Bulbasaur</a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-12 pb-8">
+            {% include "components/footer.html" %}
+        </footer>
+    </div>
+</div>
+
+<style>
+    /* Custom retro UI elements */
+    .pixelated {
+        image-rendering: pixelated;
+    }
+    
+    /* Add some CRT scan lines effect to the page */
+    .min-h-screen::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03),
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.5;
+    }
+    
+    /* Pokeball styles and animations */
+    .pokeball-container {
+        transition: transform 0.3s ease;
+        animation: float 4s ease-in-out infinite;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .pokeball-container:hover {
+        transform: scale(1.05) rotate(5deg);
+        cursor: pointer;
+    }
+    
+    .pokeball-container:hover + .pokeball-tooltip,
+    a:hover .pokeball-tooltip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-10px);
+    }
+    
+    .pokeball-tooltip {
+        transition: all 0.3s ease;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 5px 10px;
+        border-radius: 5px;
+        white-space: nowrap;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 20;
+    }
+    
+    .pokeball-button-outer {
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+    
+    .pokeball-container:hover .pokeball-button-inner {
+        background-color: #ffcc00;
+        box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+    }
+    
+    @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+        }
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+    }
+    
+    .rotate-30 {
+        transform: rotate(30deg);
+    }
+    
+    .border-6 {
+        border-width: 6px;
+    }
+    
+    /* Subtle bounce animation for pokemon sprites */
+    @keyframes bounce-subtle {
+        0%, 100% { 
+            transform: translateY(0); 
+        }
+        50% { 
+            transform: translateY(-10px); 
+        }
+    }
+    
+    .hover\:animate-bounce-subtle:hover {
+        animation: bounce-subtle 1s ease infinite;
+    }
+    
+    /* Card hover effect */
+    .group:hover .relative z-10 {
+        transform: translateY(-1px);
+    }
+    
+    /* Back to top button animation */
+    #backToTopBtn.show {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    #backToTopBtn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<!-- Back to Top Button Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        
+        // Show/hide the button based on scroll position
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) { // Show button after scrolling 300px
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        
+        // Smooth scroll to top when button is clicked
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+{% endblock %}

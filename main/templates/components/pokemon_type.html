@@ -1,0 +1,77 @@
+{% if type_name == 'normal' %}
+    {% with bg_color="bg-gray-300" text_color="text-gray-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'fire' %}
+    {% with bg_color="bg-red-400" text_color="text-red-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'water' %}
+    {% with bg_color="bg-blue-400" text_color="text-blue-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'grass' %}
+    {% with bg_color="bg-green-400" text_color="text-green-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'electric' %}
+    {% with bg_color="bg-yellow-400" text_color="text-yellow-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'ice' %}
+    {% with bg_color="bg-blue-200" text_color="text-blue-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'fighting' %}
+    {% with bg_color="bg-red-700" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'poison' %}
+    {% with bg_color="bg-purple-400" text_color="text-purple-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'ground' %}
+    {% with bg_color="bg-yellow-600" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'flying' %}
+    {% with bg_color="bg-indigo-300" text_color="text-indigo-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'psychic' %}
+    {% with bg_color="bg-pink-400" text_color="text-pink-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'bug' %}
+    {% with bg_color="bg-green-500" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'rock' %}
+    {% with bg_color="bg-yellow-800" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'ghost' %}
+    {% with bg_color="bg-purple-600" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'dragon' %}
+    {% with bg_color="bg-indigo-600" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'dark' %}
+    {% with bg_color="bg-gray-800" text_color="text-white" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'steel' %}
+    {% with bg_color="bg-gray-400" text_color="text-gray-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% elif type_name == 'fairy' %}
+    {% with bg_color="bg-pink-300" text_color="text-pink-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% else %}
+    {% with bg_color="bg-gray-300" text_color="text-gray-800" %}
+        {% include "components/pokemon_type_inner.html" %}
+    {% endwith %}
+{% endif %}

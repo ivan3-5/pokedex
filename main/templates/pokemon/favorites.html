@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Favorites | Pokédex{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 py-8 px-4">
+    {% include "components/header.html" %}
+
+    <div class="container mx-auto mt-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 font-retro-heading border-b-4 border-red-500 pb-2 inline-block">My Favorite Pokémon</h1>
+        
+        <!-- Search Form -->
+        <div class="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-800 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 font-retro-heading">Search My Favorites</h2>
+            <form method="GET" action="{% url 'favorites' %}" class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search Pokémon by name, ID, or type..." class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-500 font-retro text-lg">
+                    <p class="mt-2 text-sm text-gray-600 font-retro">Search your favorites by name (e.g. "pikachu"), ID (e.g. "25"), or type (e.g. "electric")</p>
+                </div>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-pixel text-sm py-2 px-6 rounded-lg shadow-md transition cursor-pointer">Search</button>
+            </form>
+        </div>
+        
+        <!-- Favorites Results -->
+        <div class="bg-white rounded-lg shadow-lg p-6 border-4 border-gray-800">
+            {% if all_favorites_count > 0 %}
+                {% if query %}
+                    <h2 class="text-xl font-bold mb-4 font-retro-heading">Results for "{{ query }}"</h2>
+                {% endif %}
+                
+                {% if favorites %}
+                    <div class="mb-4 text-gray-700 font-retro">
+                        <p>Showing {{ favorites|length }} of {{ total_results }} favorites {% if query %}matching "{{ query }}"{% endif %} (Page {{ page }} of {{ total_pages }})</p>
+                        {% if all_favorites_count != total_results %}
+                            <p class="mt-1 text-sm text-gray-500">({{ all_favorites_count }} total favorites)</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {% for pokemon in favorites %}
+                            {% with show_remove=True show_view_details_text=False %}
+                                {% include "components/pokemon_card.html" %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                    
+                    {% if total_pages > 1 %}
+                        <div class="mt-8 flex justify-center">
+                            <nav class="flex items-center bg-white px-4 py-3 rounded-lg border-2 border-gray-300 shadow">
+                                <div class="flex items-center justify-between">
+                                    <!-- Previous Page Button -->
+                                    {% if page > 1 %}
+                                        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page|add:"-1" }}" class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition mr-2 font-retro pagination-button">
+                                            &lt; Prev
+                                        </a>
+                                    {% else %}
+                                        <span class="px-3 py-1 bg-gray-300 text-gray-500 rounded-md mr-2 font-retro cursor-not-allowed pagination-button">
+                                            &lt; Prev
+                                        </span>
+                                    {% endif %}
+                                    
+                                    <!-- Page Numbers -->
+                                    <div class="hidden md:flex items-center space-x-1">
+                                        {% with ''|center:total_pages as range %}
+                                            {% for _ in range %}
+                                                {% with forloop.counter as page_num %}
+                                                    {% if page_num == page %}
+                                                        <span class="px-3 py-1 bg-red-600 text-white rounded-md font-retro pagination-button active-page">{{ page_num }}</span>
+                                                    {% elif page_num > page|add:"-3" and page_num < page|add:"3" %}
+                                                        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page_num }}" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition font-retro pagination-button">{{ page_num }}</a>
+                                                    {% elif page_num == 1 or page_num == total_pages %}
+                                                        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page_num }}" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition font-retro pagination-button">{{ page_num }}</a>
+                                                    {% elif page_num == page|add:"-3" or page_num == page|add:"3" %}
+                                                        <span class="px-2">...</span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    </div>
+                                    
+                                    <!-- Mobile Page Indicator -->
+                                    <span class="md:hidden px-3 py-1 font-retro">
+                                        Page {{ page }} of {{ total_pages }}
+                                    </span>
+                                    
+                                    <!-- Next Page Button -->
+                                    {% if page < total_pages %}
+                                        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page|add:"1" }}" class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition ml-2 font-retro pagination-button">
+                                            Next &gt;
+                                        </a>
+                                    {% else %}
+                                        <span class="px-3 py-1 bg-gray-300 text-gray-500 rounded-md ml-2 font-retro cursor-not-allowed pagination-button">
+                                            Next &gt;
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </nav>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-8">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png" alt="Psyduck" class="w-32 h-32 mx-auto mb-4 pixelated">
+                        <p class="text-gray-700 font-retro text-lg">No favorites found matching "{{ query }}".</p>
+                        <p class="text-gray-600 mt-2 font-retro">Try a different search term or <a href="{% url 'favorites' %}" class="text-blue-500 hover:text-blue-700 underline">view all favorites</a>.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-8">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Empty Poké Ball" class="w-24 h-24 mx-auto mb-6 pixelated">
+                    <h2 class="text-2xl font-bold mb-4 font-retro-heading text-gray-700">No Favorites Yet!</h2>
+                    <p class="text-gray-600 mb-6 font-retro text-lg">You haven't added any Pokémon to your favorites list.</p>
+                    <a href="{% url 'search' %}" class="bg-red-600 hover:bg-red-700 text-white font-pixel py-3 px-6 rounded-lg shadow-md transition inline-block text-sm">
+                        Explore Pokémon →
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="text-center text-gray-600 mt-20 pb-8">
+        {% include "components/footer.html" %}
+    </footer>
+</div>
+
+<style>
+    /* Add some CRT scan lines effect to the page */
+    .min-h-screen::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03),
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.5;
+    }
+    
+    /* Add pixel border effects */
+    .border-4.border-gray-800 {
+        border: 3px solid #000;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+    }
+    
+    /* Pagination styles */
+    .pagination-button {
+        transition: all 0.2s ease;
+    }
+    
+    .pagination-button:hover:not(.cursor-not-allowed) {
+        transform: translateY(-2px);
+    }
+    
+    /* Make the pagination buttons pixel-like */
+    .pagination-button {
+        border: 2px solid #000;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    }
+    
+    /* Add a slight animation for active page */
+    @keyframes pulse-page {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .active-page {
+        animation: pulse-page 2s infinite;
+    }
+</style>
+
+<script>
+    // Add classes to pagination elements
+    document.addEventListener('DOMContentLoaded', function() {
+        const paginationLinks = document.querySelectorAll('nav a, nav span:not(.md\\:hidden)');
+        paginationLinks.forEach(link => {
+            link.classList.add('pagination-button');
+            
+            // Add active class to current page
+            if (link.classList.contains('bg-red-600')) {
+                link.classList.add('active-page');
+            }
+        });
+    });
+</script>
+{% endblock %}

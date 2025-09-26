@@ -1,0 +1,39 @@
+{% if type_name == 'normal' %}
+    <span class="bg-gray-300 text-xs font-semibold px-2 py-1 rounded text-gray-800">{{ type_name }}</span>
+{% elif type_name == 'fire' %}
+    <span class="bg-red-400 text-xs font-semibold px-2 py-1 rounded text-red-800">{{ type_name }}</span>
+{% elif type_name == 'water' %}
+    <span class="bg-blue-400 text-xs font-semibold px-2 py-1 rounded text-blue-800">{{ type_name }}</span>
+{% elif type_name == 'grass' %}
+    <span class="bg-green-400 text-xs font-semibold px-2 py-1 rounded text-green-800">{{ type_name }}</span>
+{% elif type_name == 'electric' %}
+    <span class="bg-yellow-400 text-xs font-semibold px-2 py-1 rounded text-yellow-800">{{ type_name }}</span>
+{% elif type_name == 'ice' %}
+    <span class="bg-blue-200 text-xs font-semibold px-2 py-1 rounded text-blue-800">{{ type_name }}</span>
+{% elif type_name == 'fighting' %}
+    <span class="bg-red-700 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'poison' %}
+    <span class="bg-purple-400 text-xs font-semibold px-2 py-1 rounded text-purple-800">{{ type_name }}</span>
+{% elif type_name == 'ground' %}
+    <span class="bg-yellow-600 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'flying' %}
+    <span class="bg-indigo-300 text-xs font-semibold px-2 py-1 rounded text-indigo-800">{{ type_name }}</span>
+{% elif type_name == 'psychic' %}
+    <span class="bg-pink-400 text-xs font-semibold px-2 py-1 rounded text-pink-800">{{ type_name }}</span>
+{% elif type_name == 'bug' %}
+    <span class="bg-green-500 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'rock' %}
+    <span class="bg-yellow-800 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'ghost' %}
+    <span class="bg-purple-600 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'dragon' %}
+    <span class="bg-indigo-600 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'dark' %}
+    <span class="bg-gray-800 text-xs font-semibold px-2 py-1 rounded text-white">{{ type_name }}</span>
+{% elif type_name == 'steel' %}
+    <span class="bg-gray-400 text-xs font-semibold px-2 py-1 rounded text-gray-800">{{ type_name }}</span>
+{% elif type_name == 'fairy' %}
+    <span class="bg-pink-300 text-xs font-semibold px-2 py-1 rounded text-pink-800">{{ type_name }}</span>
+{% else %}
+    <span class="bg-gray-300 text-xs font-semibold px-2 py-1 rounded text-gray-800">{{ type_name }}</span>
+{% endif %}

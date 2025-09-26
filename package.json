@@ -1,0 +1,13 @@
+{
+    "name": "pokedex",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"python manage.py tailwind start\" \"python manage.py runserver\"",
+        "start": "gunicorn pokedex.wsgi:application --bind 0.0.0.0:8000"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

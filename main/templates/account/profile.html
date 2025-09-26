@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile | Pokédex{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 py-8 px-4">
+    {% include "components/header.html" %}
+
+    <div class="container mx-auto mt-8">
+        <!-- Profile Card -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden border-4 border-gray-800 mb-10">
+            <!-- Profile Header -->
+            <div class="bg-red-600 p-4 text-white">
+                <h1 class="text-2xl font-bold font-retro-heading">Trainer Profile</h1>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row items-center md:items-start">
+                    <!-- Avatar -->
+                    <div class="mb-6 md:mb-0 md:mr-8">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-300 bg-gray-800 flex items-center justify-center shadow-md">
+                            {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <span class="text-5xl font-bold text-white font-retro">{{ user.username|make_list|first|upper }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'change_avatar' %}" class="text-blue-600 hover:text-blue-800 text-sm font-retro transition duration-200">Change Avatar</a>
+                        </div>
+                    </div>
+                    
+                    <!-- User Info -->
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-4 font-retro">{{ user.username }}</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Personal Info -->
+                            <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
+                                <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Trainer Info</h3>
+                                <ul>
+                                    <li class="mb-2 flex justify-between">
+                                        <span class="font-semibold font-retro">Username:</span>
+                                        <span class="font-retro">{{ user.username }}</span>
+                                    </li>
+                                    <li class="mb-2 flex justify-between">
+                                        <span class="font-semibold font-retro">Email:</span>
+                                        <span class="font-retro">{{ user.email }}</span>
+                                    </li>
+                                    <li class="mb-2 flex justify-between">
+                                        <span class="font-semibold font-retro">Joined:</span>
+                                        <span class="font-retro">{{ user.date_joined|date:"F j, Y" }}</span>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-4">
+                                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-retro">Edit Profile</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Stats -->
+                            <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
+                                <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Stats</h3>
+                                <ul>
+                                    <li class="mb-2 flex justify-between">
+                                        <span class="font-semibold font-retro">Favorites:</span>
+                                        <span class="font-retro">{{ favorite_count }}</span>
+                                    </li>
+                                    <li class="mb-2 flex justify-between">
+                                        <span class="font-semibold font-retro">Last Login:</span>
+                                        <span class="font-retro">{{ user.last_login|date:"F j, Y" }}</span>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-4">
+                                    <a href="{% url 'favorites' %}" class="text-blue-600 hover:text-blue-800 text-sm font-retro">View Favorites</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Actions -->
+                        <div class="mt-6">
+                            <h3 class="text-xl font-bold mb-3 font-retro-heading border-b-2 border-red-500 pb-1 inline-block">Account</h3>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{% url 'account_change_password' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-pixel py-2 px-4 rounded-md text-sm">Change Password</a>
+                                <a href="{% url 'account_email' %}" class="bg-green-500 hover:bg-green-600 text-white font-pixel py-2 px-4 rounded-md text-sm">Manage Email</a>
+                                <a href="{% url 'account_logout' %}" class="bg-red-500 hover:bg-red-600 text-white font-pixel py-2 px-4 rounded-md text-sm">Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-8 pb-8">
+            <p class="font-retro text-lg">© 2025 Pokédex. All rights reserved.</p>
+            <p class="font-retro mt-2">Pokémon and Pokémon character names are trademarks of Nintendo.</p>
+        </footer>
+    </div>
+</div>
+
+<style>
+    /* Add some CRT scan lines effect to the page */
+    .min-h-screen::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03),
+            rgba(0, 0, 0, 0.03) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.5;
+    }
+    
+    /* Avatar hover effects */
+    .w-32.rounded-full {
+        transition: all 0.3s ease;
+    }
+    
+    .w-32.rounded-full:hover {
+        border-color: #FFCC00;
+        box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3);
+        transform: scale(1.02);
+    }
+    
+    /* Change avatar link hover */
+    a.text-blue-600:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
